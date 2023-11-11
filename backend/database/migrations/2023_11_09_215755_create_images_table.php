@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('path');
+            $table->string('thumbnail_path');
             $table->text('description');
             $table->integer('size');
             $table->string('dimension');
@@ -23,11 +24,10 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-                $table->foreignId('gallery_id')
+            $table->foreignId('gallery_id')
                 ->constrained()
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-        
             $table->timestamps();
         });
     }
