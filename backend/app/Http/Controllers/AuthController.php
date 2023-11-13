@@ -2,19 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\RegisterUserRequest;
+use App\Models\Auth;
 use App\Models\User;
 use App\Traits\HttpResponse;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     use HttpResponse;
-    public function login()
+    public function login(LoginUserRequest $request)
     {
-        return $this->success('login');
+        if (!FacadesAuth::attempt($request->only("email", "password"))) {
+            return $this->error('_','User and or password does not match', 401);
+        }
+        $user = User::where('email', $request->email)->first();
+        $token = $user->createToken('accesstoken ' . $user->name)->plainTextToken;
+        return $this->success([
+            'user' => $user,
+            'token' => $token,
+        ]);
     }
 
     public function register(RegisterUserRequest $request)
@@ -26,7 +37,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $user->createToken('accesstoken' . $user->name)->plainTextToken;
+        $token = $user->createToken('accesstoken ' . $user->name)->plainTextToken;
 
         return $this->success([
             'user' => $user,
@@ -35,8 +46,10 @@ class AuthController extends Controller
 
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        return $this->success('logout');
+        
+        $request->user()->tokens()->delete();
+        return $this->success('','Logged out successfully',204);
     }
 }
