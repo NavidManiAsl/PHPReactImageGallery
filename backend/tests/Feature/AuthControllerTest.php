@@ -3,17 +3,13 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class AuthControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * Summary of test_user_can_register_a_user
-     * @return void
-     */
+   
     public function test_user_can_register_a_user(): void
     {
         $response = $this->postJson('/api/v1/register', [
@@ -53,10 +49,6 @@ class AuthControllerTest extends TestCase
                 ]);
     }
 
-    /**
-     * Summary of test_registered_user_can_login_with_access_token
-     * @return void
-     */
     public function test_registered_user_can_login_with_access_token(): void
     {
         $user = User::factory()->create();
@@ -83,5 +75,25 @@ class AuthControllerTest extends TestCase
             ]);
     }
 
+    
+    public function test_user_needs_auth_to_access_logout():void 
+    {
+        $user = User::factory()->create();
+        $response = $this->postJson('/api/v1/logout', [$user]);
+
+        $response->assertStatus(401)
+            ->assertJson(['message' => 'Unauthenticated.']);
+    }
+    
+    public function test_authenticated_user_can_logout ():void
+    {
+        $user = User::factory()->create();
+        $token = $user->createToken('testToken')->plainTextToken;
+        $response = $this->postJson('/api/v1/logout', [$user], ['Authorization' => 'Bearer ' . $token]);
+
+        $response->assertStatus(204);
+
+
+    }
 
 }
