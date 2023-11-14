@@ -1,5 +1,5 @@
 <?php
-
+namespace App\Traits;
 trait HttpResponse {
 
     public function success ($data, $message=null, $code=200){
