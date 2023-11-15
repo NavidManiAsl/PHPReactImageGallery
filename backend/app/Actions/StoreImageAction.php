@@ -29,7 +29,7 @@ class StoreImageAction
         $image->gallery_id = $request->gallery ?
             $request->gallery
             : 1;
-          dd($image);
+         
     try {
         $image->save();
         return true;
