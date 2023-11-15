@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
 use App\Actions\StoreImageAction;
-
+use App\Http\Requests\StoreImageRequest;
 
 class ImagesController extends Controller
 {
@@ -21,13 +21,13 @@ class ImagesController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, StoreImageAction $storeImageAction)
+    public function store(StoreImageRequest $request, StoreImageAction $storeImageAction)
     {
-        if (auth('sanctum')->check()) {
-            $user = auth('sanctum')->user();
-            
+       
+        if ($storeImageAction($request)) {
+           return  $this->success(null, 'Image has been successfully uploaded');
         } else {
-            $this->error(null, 'Unauthorized', 401);
+           return  $this->error(null, 'Unexpected error', '500');
         }
     }
 
