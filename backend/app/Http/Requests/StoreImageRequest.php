@@ -11,7 +11,7 @@ class StoreImageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,6 +22,7 @@ class StoreImageRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'image' => ['required', 'image','mimes:jpeg,png,jpg' ],
             'name' => ['required', 'string', 'max:50', 'unique'],
             'description' => ['string','max:2000'],
             'tags' => ['string','max:2000']
