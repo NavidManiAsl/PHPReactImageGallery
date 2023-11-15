@@ -14,8 +14,10 @@ class Serialized implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if(unserialize($value)){
-            $fail('The '. $attribute .'must be a serialized array');
+        $data = @unserialize($value);
+        
+        if(!$data){
+            $fail('The '. $attribute .' must be a serialized array');
         }
     }
 }
