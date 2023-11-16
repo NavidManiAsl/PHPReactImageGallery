@@ -6,6 +6,8 @@ use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
 use App\Actions\StoreImageAction;
 use App\Http\Requests\StoreImageRequest;
+use App\Models\Image;
+use Illuminate\Support\Facades\Log;
 
 class ImagesController extends Controller
 {
@@ -15,7 +17,13 @@ class ImagesController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $images = Image::all();
+            return $this->success($images);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage().$th->getTrace());
+            return  $this->error(null, 'Unexpected error', '500');
+        }
     }
 
     /**
