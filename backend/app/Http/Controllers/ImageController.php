@@ -48,7 +48,8 @@ class ImageController extends Controller
             
             return $this->success($image);
         } catch (\Throwable $th) {
-            $this->error(null, 'unauthorized', '401');
+            Log::error($th->getMessage().$th->getTrace());
+            return  $this->error(null, 'Unexpected error', '500');
         }
     }
 
@@ -63,8 +64,15 @@ class ImageController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Image $image)
     {
-        //
+        try {
+            $image::destroy($image->id);
+            return $this->success(null,'Deleted',204);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage().$th->getTrace());
+            return  $this->error(null, 'Unexpected error', '500');
+        }
+        
     }
 }
