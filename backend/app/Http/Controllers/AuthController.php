@@ -46,7 +46,11 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        if (!$request->user()) {
+            return $this->error(null, 'Unauthenticated.', 401);
+        }
+
         $request->user()->tokens()->delete();
-        return $this->success(null,null,$code = 204);
+        return $this->success(null, null, $code = 204);
     }
 }
