@@ -9,7 +9,7 @@ use App\Http\Requests\StoreImageRequest;
 use App\Models\Image;
 use Illuminate\Support\Facades\Log;
 
-class ImagesController extends Controller
+class ImageController extends Controller
 {
     use HttpResponse;
     /**
@@ -18,7 +18,7 @@ class ImagesController extends Controller
     public function index()
     {
         try {
-            $images = Image::all();
+            $images = Image::where("user_id", auth('sanctum')->id())->get();
             return $this->success($images);
         } catch (\Throwable $th) {
             Log::error($th->getMessage().$th->getTrace());
@@ -42,9 +42,14 @@ class ImagesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Image $image)
     {
-        //
+        try {
+            
+            return $this->success($image);
+        } catch (\Throwable $th) {
+            $this->error(null, 'unauthorized', '401');
+        }
     }
 
     /**
