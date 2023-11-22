@@ -22,7 +22,14 @@ use Laravel\Sanctum\Sanctum;
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
-Route::apiResource('images', ImageController::class)
-    ->except(['create', 'edit'])
-    ->middleware(CheckImageOwner::class)
-    ->only(['index', 'show']);
+
+Route::prefix('/images')->middleware('auth:sanctum')->group(function () {
+  
+    
+    Route::post('/', [ImageController::class, 'store']);
+    Route::get('/', [ImageController::class, 'index']);
+    
+    Route::get('/{image}', [ImageController::class, 'show'])
+    ->middleware(CheckImageOwner::class);
+    
+});
