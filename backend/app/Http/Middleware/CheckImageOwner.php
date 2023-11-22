@@ -16,22 +16,31 @@ class CheckImageOwner
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Image $image, Closure $next): Response
-    {
+    public function handle(Request $request, Closure $next): Response
+    {   
+        $uri = explode('/',$request->getRequestUri());
+        end($uri);
+        
+       $imageId = end($uri);
+        $image = Image::find($imageId);
         if (!$image){
             return $this->error('null', 'Not found', 404);
         }
         
         $user = auth('sanctum')->user();
+
+        if (!$user) {
+            return $this->error('null', 'Unauthenticated',401);
+        }
         
         
         if (
-            !$user || $user->id !== $image->user_id
+            $user->id !== $image->user_id
         ) {
             return $this->error(null, 'Unauthorized', 401);
         }
 
 
-        return $next($request, $image);
+        return $next($request );
     }
 }
