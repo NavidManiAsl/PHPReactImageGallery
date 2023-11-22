@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ImagesController;
+use App\Http\Controllers\ImageController;
+use App\Http\Middleware\CheckImageOwner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Sanctum;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,10 +18,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
-Route::post('register', [AuthController::class,'register']);
-Route::post('login', [AuthController::class,'login']);
-Route::apiResource('images', ImagesController::class)->except(['create','edit']);
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
+Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
+Route::apiResource('images', ImageController::class)
+    ->except(['create', 'edit'])
+    ->middleware(CheckImageOwner::class)
+    ->only(['index', 'show']);
