@@ -42,4 +42,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function image() 
+    {
+        return $this->hasMany(Image::class);
+    }
+
+    public function gallery()
+    {
+        return $this->hasMany(Gallery::class);
+    }
 }
