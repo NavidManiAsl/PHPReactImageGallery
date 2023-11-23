@@ -1,20 +1,8 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ImageController;
+use App\Http\Controllers\{AuthController,ImageController, GalleryController};
 use App\Http\Middleware\CheckImageOwner;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
 
 
 Route::post('register', [AuthController::class, 'register']);
@@ -34,3 +22,18 @@ Route::prefix('/images')->group(function () {
     ->middleware(CheckImageOwner::class);
     
 });
+
+Route::prefix('/galleries')->group(function (){
+    
+    Route::post('/', [GalleryController::class,'store']);
+    Route::get('/', [GalleryController::class,'index']);
+});
+
+/**
+ * create a gallery
+ * show user galleries
+ * show a gallery
+ * delete a gallery
+ * add image to a gallery
+ * remove a gallery
+ */
