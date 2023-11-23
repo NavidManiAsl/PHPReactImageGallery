@@ -15,8 +15,12 @@ class ImageController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+       
+        if(!$request->user('sanctum')){
+            return $this->unauthenticated();
+        }
         try {
             $images = Image::where("user_id", auth('sanctum')->id())->get();
             return $this->success($images);
@@ -31,11 +35,14 @@ class ImageController extends Controller
      */
     public function store(StoreImageRequest $request, StoreImageAction $storeImageAction)
     {
-       
+       if(!$request->user('sanctum')){
+        return $this->unauthenticated();
+       }
         if ($storeImageAction($request)) {
            return  $this->success(null, 'Image has been successfully uploaded');
         } else {
-           return  $this->error(null, 'Unexpected error', '500');
+           
+            return  $this->error(null, 'Unexpected error', '500');
         }
     }
 
