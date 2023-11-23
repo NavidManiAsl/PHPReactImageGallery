@@ -23,7 +23,7 @@ class StoreGalleryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'=>['string', 'min:3', 'max:256','required'],
+            'name'=>['string', 'min:3', 'max:256','required', 'unique:galleries'],
             'tags' => ['string','max:2000', new Serialized]
         ];
     }
