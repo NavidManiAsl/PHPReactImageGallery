@@ -26,7 +26,7 @@ class ImageController extends Controller
             return $this->success($images);
         } catch (\Throwable $th) {
             Log::error($th->getMessage().$th->getTrace());
-            return  $this->error(null, 'Unexpected error', '500');
+            return  $this->serverError();
         }
     }
 
@@ -42,7 +42,7 @@ class ImageController extends Controller
            return  $this->success(null, 'Image has been successfully uploaded');
         } else {
            
-            return  $this->error(null, 'Unexpected error', '500');
+            return  $this->serverError();
         }
     }
 
@@ -56,7 +56,7 @@ class ImageController extends Controller
             return $this->success($image);
         } catch (\Throwable $th) {
             Log::error($th->getMessage().$th->getTrace());
-            return  $this->error(null, 'Unexpected error', '500');
+            return  $this->serverError();
         }
     }
 
@@ -78,7 +78,7 @@ class ImageController extends Controller
             return $this->success(null,'Deleted',204);
         } catch (\Throwable $th) {
             Log::error($th->getMessage().$th->getTrace());
-            return  $this->error(null, 'Unexpected error', '500');
+            return  $this->serverError();
         }
         
     }
