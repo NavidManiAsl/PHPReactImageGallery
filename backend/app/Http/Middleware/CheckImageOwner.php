@@ -30,14 +30,14 @@ class CheckImageOwner
         $user = auth('sanctum')->user();
 
         if (!$user) {
-            return $this->error('null', 'Unauthenticated',401);
+            return $this->unauthenticated();
         }
         
         
         if (
             $user->id !== $image->user_id
         ) {
-            return $this->error(null, 'Unauthorized', 401);
+            return $this->unauthorized();
         }
 
 
