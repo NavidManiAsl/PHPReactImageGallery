@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\{AuthController,ImageController, GalleryController};
-use App\Http\Middleware\CheckImageOwner;
+use App\Http\Controllers\{AuthController, ImageController, GalleryController};
+use App\Http\Middleware\CheckOwnership;
 use Illuminate\Support\Facades\Route;
 
 
@@ -10,28 +10,29 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
 
 Route::prefix('/images')->group(function () {
-  
-    
+
+
     Route::post('/', [ImageController::class, 'store']);
     Route::get('/', [ImageController::class, 'index']);
-    
-    Route::get('/{image}', [ImageController::class, 'show'])
-    ->middleware(CheckImageOwner::class);
 
-    Route::delete('/{image}', [ImageController::class,'destroy'])
-    ->middleware(CheckImageOwner::class);
-    
+    Route::get('/{image}', [ImageController::class, 'show'])
+        ->middleware(CheckOwnership::class);
+
+    Route::delete('/{image}', [ImageController::class, 'destroy'])
+        ->middleware(CheckOwnership::class);
 });
 
-Route::prefix('/galleries')->group(function (){
-    
-    Route::post('/', [GalleryController::class,'store']);
-    Route::get('/', [GalleryController::class,'index']);
+Route::prefix('/galleries')->group(function () {
+
+    Route::post('/', [GalleryController::class, 'store']);
+    Route::get('/', [GalleryController::class, 'index']);
+    Route::get('/{gallery}', [GalleryController::class, 'show'])
+        ->middleware(CheckOwnership::class);
 });
 
 /**
- * create a gallery
- * show user galleries
+ * create a gallery DONE
+ * show user galleries DONE
  * show a gallery
  * delete a gallery
  * add image to a gallery
