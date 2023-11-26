@@ -32,7 +32,7 @@ class StoreImageAction
         $image->user_id = Auth::guard('sanctum')->user()->id;
         $image->gallery_id = $request->gallery ?
             $request->gallery
-            : 1;
+            : null;
 
         try {
             $image->save();
