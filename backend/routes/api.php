@@ -28,12 +28,15 @@ Route::prefix('/galleries')->group(function () {
     Route::get('/', [GalleryController::class, 'index']);
     Route::get('/{gallery}', [GalleryController::class, 'show'])
         ->middleware(CheckOwnership::class);
+    Route::post('/{gallery}', [GalleryController::class, 'addImage'])
+        ->middleware(CheckOwnership::class);
+        
 });
 
 /**
  * create a gallery DONE
  * show user galleries DONE
- * show a gallery
+ * show a gallery Done
  * delete a gallery
  * add image to a gallery
  * remove a gallery
