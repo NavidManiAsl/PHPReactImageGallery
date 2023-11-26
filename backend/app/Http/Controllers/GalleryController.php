@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreGalleryRequest;
+use App\Actions\AddImageAction;
+use App\Http\Requests\{AddImageRequest, StoreGalleryRequest};
 use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
 use App\Models\Gallery;
 use Illuminate\Support\Facades\Log;
+use App\Exceptions\DuplicateImagesException;
 
 class GalleryController extends Controller
 {
@@ -69,5 +71,24 @@ class GalleryController extends Controller
             Log::error($th->getMessage());
             return $this->error(null, 'not Found', 404);
         }
+    }
+
+    public function addImage(AddImageRequest $request, AddImageAction $action)
+    {
+        $user = $request->user('sanctum');
+        if (!$user) {
+            return $this->unauthenticated();
+        }
+
+        try {
+            $action($request);
+            return $this->success(null,'Image has been added to gallery', 200);
+        } catch (DuplicateImagesException) {
+            return $this->success(null,'Image has been added, Duplication has been ignored', 200);
+        }catch(\Throwable $th){
+            Log::error($th->getMessage());
+            return $this->serverError();
+        }
+
     }
 }
