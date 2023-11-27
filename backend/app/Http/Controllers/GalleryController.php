@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\AddImageAction;
-use App\Http\Requests\{AddImageRequest, StoreGalleryRequest};
+use App\Actions\{AddImageAction, RemoveImageAction};
+use App\Exceptions\BadRequestException;
+use App\Http\Requests\{AddRemoveImageRequest, StoreGalleryRequest};
 use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
 use App\Models\Gallery;
@@ -73,7 +74,10 @@ class GalleryController extends Controller
         }
     }
 
-    public function addImage(AddImageRequest $request, AddImageAction $action)
+    /**
+     * Add image to an existing gallery
+     */
+    public function addImage(AddRemoveImageRequest $request, AddImageAction $action)
     {
         $user = $request->user('sanctum');
         if (!$user) {
@@ -82,13 +86,48 @@ class GalleryController extends Controller
 
         try {
             $action($request);
-            return $this->success(null,'Image has been added to gallery', 200);
+            return $this->success(null, 'Image has been added to gallery', 200);
         } catch (DuplicateImagesException) {
-            return $this->success(null,'Image has been added, Duplication has been ignored', 200);
-        }catch(\Throwable $th){
+            return $this->success(null, 'Image has been added, Duplication has been ignored', 200);
+        } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return $this->serverError();
         }
 
+    }
+
+    /**
+     * Remove images from an existing gallery 
+     */
+    public function removeImage(AddRemoveImageRequest $request, RemoveImageAction $action)
+    {
+        
+       try {
+        $action($request);
+        return $this->success(null, 'Image has been successfully deleted', 200);
+       } catch (BadRequestException $e) {
+        return $this->error(null, 'Bad Request', 400);
+       } catch (\Throwable $th) {
+        Log::error($th->getMessage());
+        return $this->serverError();
+       }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Gallery $gallery)
+    {
+        if(!$gallery){
+            return $this->error(null, 'Not found',404);
+        }
+        try {
+            Gallery::destroy($gallery->id);
+
+            return $this->success(null,'Deleted', 204);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return $this->serverError();
+        }
     }
 }
