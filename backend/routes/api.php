@@ -26,18 +26,27 @@ Route::prefix('/galleries')->group(function () {
 
     Route::post('/', [GalleryController::class, 'store']);
     Route::get('/', [GalleryController::class, 'index']);
+
     Route::get('/{gallery}', [GalleryController::class, 'show'])
         ->middleware(CheckOwnership::class);
+
     Route::post('/{gallery}', [GalleryController::class, 'addImage'])
         ->middleware(CheckOwnership::class);
-        
+
+    Route::delete('/{gallery}', [GalleryController::class, 'destroy'])
+        ->middleware(CheckOwnership::class);
+
+    Route::delete('/{gallery}/images', [GalleryController::class, 'removeImage'])
+        ->middleware(CheckOwnership::class);
+
 });
 
 /**
  * create a gallery DONE
  * show user galleries DONE
- * show a gallery Done
- * delete a gallery
- * add image to a gallery
- * remove a gallery
+ * show a gallery DONE
+ * delete a gallery DONE
+ * add image to a gallery DONE
+ * remove an image from gallery DONE
+ * override router exceptions DONE
  */
