@@ -1,13 +1,13 @@
 <?php
 namespace App\Actions;
 
-use App\Http\Requests\AddImageRequest;
+use App\Http\Requests\AddRemoveImageRequest;
 use App\Models\Gallery;
 use App\Exceptions\DuplicateImagesException;
 
 class AddImageAction
 {
-    public function __invoke(AddImageRequest $request)
+    public function __invoke(AddRemoveImageRequest $request)
     {
         $galleryId = $request->gallery;
         $gallery = Gallery::where('id', $galleryId)->first();
