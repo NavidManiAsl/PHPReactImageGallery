@@ -21,27 +21,29 @@ class CheckOwnership
     public function handle(Request $request, Closure $next): Response
     {
         $user = auth('sanctum')->user();
-      
+
 
         if (!$user) {
             return $this->unauthenticated();
         }
 
         $uri = explode('/', $request->getRequestUri());
-        end($uri);
 
-        $id = end($uri);
-        $type = $uri[count($uri) - 2];
-        
-        switch ($type) {
-            case 'images':
-                try {
-                    $object = Image::find($id);
-                } catch (\Throwable $th) {
-                    Log::error($th->getMessage());
-                    return $this->serverError();
-                }
-                break;
+
+        if (count($uri) < 6) {
+            $id = end($uri);
+            $type = $uri[count($uri) - 2];
+            $object = null;
+
+            switch ($type) {
+                case 'images':
+                    try {
+                        $object = Image::find($id);
+                    } catch (\Throwable $th) {
+                        Log::error($th->getMessage());
+                        return $this->serverError();
+                    }
+                    break;
                 case 'galleries':
                     try {
                         $object = Gallery::find($id);
@@ -50,9 +52,13 @@ class CheckOwnership
                         return $this->serverError();
                     }
                     break;
-                    default:
-                return $this->serverError();
+                default:
+                    return $this->serverError();
 
+            }
+        } else {
+            $id = $uri[count($uri) - 2];
+            $object = Gallery::find($id);
         }
 
         if (!$object) {
