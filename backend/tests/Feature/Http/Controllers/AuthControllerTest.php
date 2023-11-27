@@ -4,6 +4,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use laravel\Sanctum\Sanctum;
 
 class AuthControllerTest extends TestCase
 {
@@ -82,14 +83,15 @@ class AuthControllerTest extends TestCase
         $response = $this->postJson('/api/v1/logout', [$user]);
 
         $response->assertStatus(401)
-            ->assertJson(['message' => 'Unauthenticated.']);
+            ->assertJson(['message' => 'Unauthenticated']);
     }
     
     public function test_authenticated_user_can_logout ():void
     {
         $user = User::factory()->create();
-        $token = $user->createToken('testToken')->plainTextToken;
-        $response = $this->postJson('/api/v1/logout', [$user], ['Authorization' => 'Bearer ' . $token]);
+        Sanctum::actingAs($user); 
+
+        $response = $this->postJson('/api/v1/logout');
 
         $response->assertStatus(204);
 
