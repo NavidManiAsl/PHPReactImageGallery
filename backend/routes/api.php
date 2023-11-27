@@ -1,15 +1,16 @@
 <?php
 
 use App\Http\Controllers\{AuthController, ImageController, GalleryController};
+use App\Http\Middleware\Auth;
 use App\Http\Middleware\CheckOwnership;
 use Illuminate\Support\Facades\Route;
 
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
-Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
+Route::middleware(Auth::class)->post('logout', [AuthController::class, 'logout']);
 
-Route::prefix('/images')->group(function () {
+Route::middleware(Auth::class)->prefix('/images')->group(function () {
 
 
     Route::post('/', [ImageController::class, 'store']);
@@ -22,7 +23,7 @@ Route::prefix('/images')->group(function () {
         ->middleware(CheckOwnership::class);
 });
 
-Route::prefix('/galleries')->group(function () {
+Route::middleware(Auth::class)->prefix('/galleries')->group(function () {
 
     Route::post('/', [GalleryController::class, 'store']);
     Route::get('/', [GalleryController::class, 'index']);

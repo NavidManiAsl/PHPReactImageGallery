@@ -22,9 +22,7 @@ class GalleryController extends Controller
     public function store(StoreGalleryRequest $request)
     {
 
-        if (!$request->user('sanctum')) {
-            return $this->unauthenticated();
-        }
+      
         $gallery = Gallery::create([
             "name" => $request->name,
             "tags" => $request->tags,
@@ -46,9 +44,7 @@ class GalleryController extends Controller
     {
 
         $user = $request->user('sanctum');
-        if (!$user) {
-            return $this->unauthenticated();
-        }
+       
 
         try {
             $galleries = Gallery::where('user_id', $user->id)->get();
@@ -63,9 +59,9 @@ class GalleryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Gallery $gallery)
+    public function show(Gallery $gallery ,Request $request)
     {
-
+        
         try {
             return $this->success($gallery, 'ok', 200);
         } catch (\Throwable $th) {
@@ -80,9 +76,7 @@ class GalleryController extends Controller
     public function addImage(AddRemoveImageRequest $request, AddImageAction $action)
     {
         $user = $request->user('sanctum');
-        if (!$user) {
-            return $this->unauthenticated();
-        }
+       
 
         try {
             $action($request);
