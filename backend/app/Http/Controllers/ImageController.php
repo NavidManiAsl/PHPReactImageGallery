@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\AddTagsAction;
 use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
 use App\Actions\StoreImageAction;
+use App\Http\Requests\AddRemoveTagsRequest;
 use App\Http\Requests\StoreImageRequest;
 use App\Models\Image;
 use Illuminate\Support\Facades\Log;
@@ -77,5 +79,16 @@ class ImageController extends Controller
             return  $this->serverError();
         }
         
+    }
+
+    /**
+     * Add tags to an image.
+     */
+    public function addTags(AddRemoveTagsRequest $request, AddTagsAction $action)
+    {
+        if(!$action($request)){
+            return $this->serverError();
+        };
+        return $this->success(null,'Tags has been successfully updated',200);
     }
 }
