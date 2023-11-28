@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\AddTagsAction;
+use App\Actions\{AddTagsAction, RemoveTagsAction};
 use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
 use App\Actions\StoreImageAction;
+use App\Exceptions\BadRequestException;
 use App\Http\Requests\AddRemoveTagsRequest;
 use App\Http\Requests\StoreImageRequest;
 use App\Models\Image;
@@ -19,14 +20,14 @@ class ImageController extends Controller
      */
     public function index(Request $request)
     {
-       
-        
+
+
         try {
             $images = Image::where("user_id", auth('sanctum')->id())->get();
             return $this->success($images);
         } catch (\Throwable $th) {
-            Log::error($th->getMessage().$th->getTrace());
-            return  $this->serverError();
+            Log::error($th->getMessage() . $th->getTrace());
+            return $this->serverError();
         }
     }
 
@@ -35,12 +36,12 @@ class ImageController extends Controller
      */
     public function store(StoreImageRequest $request, StoreImageAction $storeImageAction)
     {
-       
+
         if ($storeImageAction($request)) {
-           return  $this->success(null, 'Image has been successfully uploaded');
+            return $this->success(null, 'Image has been successfully uploaded');
         } else {
-           
-            return  $this->serverError();
+
+            return $this->serverError();
         }
     }
 
@@ -50,11 +51,11 @@ class ImageController extends Controller
     public function show(Image $image)
     {
         try {
-            
+
             return $this->success($image);
         } catch (\Throwable $th) {
-            Log::error($th->getMessage().$th->getTrace());
-            return  $this->serverError();
+            Log::error($th->getMessage() . $th->getTrace());
+            return $this->serverError();
         }
     }
 
@@ -73,12 +74,12 @@ class ImageController extends Controller
     {
         try {
             $image::destroy($image->id);
-            return $this->success(null,'Deleted',204);
+            return $this->success(null, 'Deleted', 204);
         } catch (\Throwable $th) {
-            Log::error($th->getMessage().$th->getTrace());
-            return  $this->serverError();
+            Log::error($th->getMessage() . $th->getTrace());
+            return $this->serverError();
         }
-        
+
     }
 
     /**
@@ -86,9 +87,28 @@ class ImageController extends Controller
      */
     public function addTags(AddRemoveTagsRequest $request, AddTagsAction $action)
     {
-        if(!$action($request)){
+        if (!$action($request)) {
             return $this->serverError();
-        };
-        return $this->success(null,'Tags has been successfully updated',200);
+        }
+        ;
+        return $this->success(null, 'Tags has been successfully updated', 200);
+    }
+
+    /** 
+     * Remove tags from an image.
+     */
+    public function removeTags(AddRemoveTagsRequest $request, RemoveTagsAction $action)
+    {
+
+        try {
+            $action($request);
+            return $this->success(null, 'Tags has been removed successfully',200);
+        } catch (BadRequestException) {
+            return $this->error(null,'Bad request',400);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return $this->serverError();
+        }
+
     }
 }
