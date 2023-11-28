@@ -23,6 +23,7 @@ class GalleryFactory extends Factory
             'user_id' => function () {
                 return User::factory()->create()->id;
             },
+            'images' => serialize($this->faker->shuffleArray([1,2,3])),
         ];
     }
 }
