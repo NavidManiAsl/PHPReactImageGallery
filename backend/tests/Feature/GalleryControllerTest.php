@@ -2,10 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\Gallery;
+use App\Models\{Gallery, Image};
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class GalleryControllerTest extends TestCase
@@ -64,9 +63,9 @@ class GalleryControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $this->actingAs($user);
-        $gallery1 = Gallery::factory()->create(['user_id'=> $user->id]);
+        $gallery1 = Gallery::factory()->create(['user_id' => $user->id]);
         $gallery2 = Gallery::factory()->create();
-        $response = $this->delete('/api/v1/galleries/'. $gallery1->id);
+        $response = $this->delete('/api/v1/galleries/' . $gallery1->id);
         $response->assertStatus(200)->assertJson([
             'status' => 'ok',
             'message' => 'Gallery has been successfully deleted',
@@ -74,8 +73,56 @@ class GalleryControllerTest extends TestCase
         ]);
         $this->assertNull(Gallery::find($user->id));
 
-        $response = $this->delete('/api/v1/galleries/'. $gallery2->id);
-        $response->assertStatus(401)->assertJsonFragment(['message'=> 'Unauthorized']);
+        $response = $this->delete('/api/v1/galleries/' . $gallery2->id);
+        $response->assertStatus(401)->assertJsonFragment(['message' => 'Unauthorized']);
 
+    }
+
+    public function test_authorized_user_can_add_an_image_to_a_gallery()
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user);
+        $image = Image::factory()->create(['user_id' => $user->id]);
+        $gallery1 = Gallery::factory()->create(['user_id' => $user->id, 'images' => null]);
+        $gallery2 = Gallery::factory()->create();
+        $response = $this->post('/api/v1/galleries/' . $gallery1->id, [
+            'images' => serialize([$image->id])
+        ]);
+        $response->assertStatus(200)->assertJson([
+            'status' => 'ok',
+            'message' => 'Image has been added to gallery',
+            'data' => null
+        ]);
+        $gallery1->refresh();
+        $this->assertEquals(count(unserialize($gallery1->images)), 1);
+
+        $response = $this->post('/api/v1/galleries/' . $gallery2->id, [
+            'images' => serialize([$image->id])
+        ]);
+
+        $response->assertStatus(401)->assertJsonFragment(['message' => 'Unauthorized']);
+
+
+    }
+
+    public function test_authorized_user_can_remove_an_image_from_a_gallery()
+    {
+        $user = User::factory()->create();
+        $image = Image::factory()->create(['id' => $user->id]);
+        $gallery1 = Gallery::factory()->create(['user_id' => $user->id, 'images' => serialize([$image->id])]);
+        $gallery2 = Gallery::factory()->create();
+        $this->actingAs($user);
+        $response = $this->delete('/api/v1/galleries/' . $gallery1->id . '/images', [
+            'images' => serialize([$image->id])
+        ]);
+        $response->assertStatus(200)->assertJsonFragment(['message' => 'Image has been successfully deleted']);
+        $gallery1->refresh();
+        $this->assertEquals(count(unserialize($gallery1->images)), false);
+
+        $response = $this->delete('/api/v1/galleries/' . $gallery2->id . '/images', [
+            'images' => serialize([$image->id])
+        ]);
+        $response->assertStatus(401)->assertJsonFragment(['message' => 'Unauthorized']);
     }
 }
