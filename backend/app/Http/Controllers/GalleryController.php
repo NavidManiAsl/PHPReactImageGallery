@@ -75,7 +75,7 @@ class GalleryController extends Controller
      */
     public function addImage(AddRemoveImageRequest $request, AddImageAction $action)
     {
-        $user = $request->user('sanctum');
+        
        
 
         try {
@@ -118,7 +118,7 @@ class GalleryController extends Controller
         try {
             Gallery::destroy($gallery->id);
 
-            return $this->success(null,'Deleted', 204);
+            return $this->success(null,'Gallery has been successfully deleted', 200);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return $this->serverError();
