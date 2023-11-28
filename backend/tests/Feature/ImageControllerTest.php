@@ -7,6 +7,8 @@ use Tests\TestCase;
 use App\Models\{User, Image, Gallery};
 use Illuminate\Http\UploadedFile;
 
+use function PHPUnit\Framework\assertGreaterThan;
+
 class ImageControllerTest extends TestCase
 {
     use RefreshDatabase;
@@ -105,21 +107,39 @@ class ImageControllerTest extends TestCase
 
     public function test_store_method_store_an_image()
     {
-        $user = User::factory()->create(['id'=>1]);
+        $user = User::factory()->create(['id' => 1]);
         Gallery::factory()->create(['id' => 1]);
         auth()->login($user);
-        
-       
+
+
         $testImagePath = storage_path('/../tests/test.jpg');
-        $response = $this->withHeaders(['bearer'=>$user->currentAccessToken()])->post('/api/v1/images',[
+        $response = $this->withHeaders(['bearer' => $user->currentAccessToken()])->post('/api/v1/images', [
             'name' => 'test',
-            'description'=>'test',
-            'tags'=>'a:3:{i:0;s:3:"Red";i:1;s:5:"Green";i:2;s:4:"Blue";}',
-            'image' => new UploadedFile($testImagePath,'test.jpg','image/jpeg',null,true),
+            'description' => 'test',
+            'tags' => 'a:3:{i:0;s:3:"Red";i:1;s:5:"Green";i:2;s:4:"Blue";}',
+            'image' => new UploadedFile($testImagePath, 'test.jpg', 'image/jpeg', null, true),
         ]);
 
         $response->assertStatus(200);
-        $response->assertJsonFragment(['message' =>'Image has been successfully uploaded']);
+        $response->assertJsonFragment(['message' => 'Image has been successfully uploaded']);
 
+    }
+
+    public function test_authorized_user_can_add_tags_to_an_image()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $image1 = Image::factory()->create(['user_id' => $user->id, 'tags' => null]);
+        $image2 = Image::factory()->create(['user_id' => 3]);
+        $response = $this->post('/api/v1/images/' . $image1->id . '/tags', [
+            'tags' => 'a:3:{i:0;s:3:"Red";i:1;s:5:"Green";i:2;s:4:"Blue";}'
+        ]);
+        $response->assertStatus(200)->assertJsonFragment(['message' => 'Tags has been successfully updated']);
+        $image1->refresh();
+        assertGreaterThan(1, count($image1->tags));
+        $response = $this->post('/api/v1/images/' . $image2->id . '/tags', [
+            'tags' => 'a:3:{i:0;s:3:"Red";i:1;s:5:"Green";i:2;s:4:"Blue";}'
+        ]);
+        $response->assertStatus(401)->assertJsonFragment(['message' => 'Unauthorized']);
     }
 }
