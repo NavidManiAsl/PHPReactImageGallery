@@ -10,15 +10,6 @@ use Tests\TestCase;
 class GalleryControllerTest extends TestCase
 {
     use RefreshDatabase;
-    /**
-     * auth test DONE
-     * user can create a gallery DONE
-     * see all galleries DONE
-     * see a gallery DONE
-     * add image to a gallery 
-     * remove an image from a gallery
-     * delete a gallery
-     */
 
     public function test_only_authenticated_user_can_create_a_gallery()
     {
