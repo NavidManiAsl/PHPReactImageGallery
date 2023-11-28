@@ -3,6 +3,7 @@
 use App\Http\Controllers\{AuthController, ImageController, GalleryController};
 use App\Http\Middleware\Auth;
 use App\Http\Middleware\CheckOwnership;
+use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 
 
@@ -15,6 +16,11 @@ Route::middleware(Auth::class)->prefix('/images')->group(function () {
 
     Route::post('/', [ImageController::class, 'store']);
     Route::get('/', [ImageController::class, 'index']);
+
+    Route::post('/{image}/tags', [ImageController::class,'addTags'])
+    ->middleware(CheckOwnership::class);
+    Route::delete('/{image}/tags', [ImageController::class,'removeTags'])
+        ->middleware(CheckOwnership::class);
 
     Route::get('/{image}', [ImageController::class, 'show'])
         ->middleware(CheckOwnership::class);
