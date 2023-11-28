@@ -60,16 +60,15 @@ class CheckOwnership
             $id = $uri[count($uri) - 2];
             $object = Gallery::find($id);
         }
-
-        if (!$object) {
-            return $this->error('null', 'Not found', 404);
-        }
-
         if (
             $user->id !== $object->user_id
         ) {
             return $this->unauthorized();
         }
+        if (!$object) {
+            return $this->error('null', 'Not found', 404);
+        }
+
 
 
         return $next($request);
