@@ -33,32 +33,33 @@ class CheckOwnership
         if (count($uri) < 6) {
             $id = end($uri);
             $type = $uri[count($uri) - 2];
-            $object = null;
-
-            switch ($type) {
-                case 'images':
-                    try {
-                        $object = Image::find($id);
-                    } catch (\Throwable $th) {
-                        Log::error($th->getMessage());
-                        return $this->serverError();
-                    }
-                    break;
-                case 'galleries':
-                    try {
-                        $object = Gallery::find($id);
-                    } catch (\Throwable $th) {
-                        Log::error($th->getMessage());
-                        return $this->serverError();
-                    }
-                    break;
-                default:
-                    return $this->serverError();
-
-            }
         } else {
             $id = $uri[count($uri) - 2];
-            $object = Gallery::find($id);
+            $type = $uri[count($uri) - 3];
+        }
+        $object = null;
+
+        switch ($type) {
+            case 'images':
+                try {
+                    $object = Image::find($id);
+                } catch (\Throwable $th) {
+                    Log::error($th->getMessage());
+                    return $this->serverError();
+                }
+                break;
+            case 'galleries':
+                try {
+                    $object = Gallery::find($id);
+                } catch (\Throwable $th) {
+                    Log::error($th->getMessage());
+                    return $this->serverError();
+                }
+                break;
+            default:
+                return $this->serverError();
+
+
         }
         if (
             $user->id !== $object->user_id
