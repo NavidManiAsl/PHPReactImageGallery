@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\{AddImageAction, RemoveImageAction};
+use App\Actions\{AddImageAction, AddTagsAction, RemoveImageAction, RemoveTagsAction};
 use App\Exceptions\BadRequestException;
-use App\Http\Requests\{AddRemoveImageRequest, StoreGalleryRequest};
+use App\Http\Requests\{AddRemoveImageRequest, AddRemoveTagsRequest, StoreGalleryRequest};
 use App\Traits\HttpResponse;
 use Illuminate\Http\Request;
 use App\Models\Gallery;
@@ -22,7 +22,7 @@ class GalleryController extends Controller
     public function store(StoreGalleryRequest $request)
     {
 
-      
+
         $gallery = Gallery::create([
             "name" => $request->name,
             "tags" => $request->tags,
@@ -44,7 +44,7 @@ class GalleryController extends Controller
     {
 
         $user = $request->user('sanctum');
-       
+
 
         try {
             $galleries = Gallery::where('user_id', $user->id)->get();
@@ -59,9 +59,9 @@ class GalleryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Gallery $gallery ,Request $request)
+    public function show(Gallery $gallery, Request $request)
     {
-        
+
         try {
             return $this->success($gallery, 'ok', 200);
         } catch (\Throwable $th) {
@@ -75,8 +75,8 @@ class GalleryController extends Controller
      */
     public function addImage(AddRemoveImageRequest $request, AddImageAction $action)
     {
-        
-       
+
+
 
         try {
             $action($request);
@@ -95,16 +95,16 @@ class GalleryController extends Controller
      */
     public function removeImage(AddRemoveImageRequest $request, RemoveImageAction $action)
     {
-        
-       try {
-        $action($request);
-        return $this->success(null, 'Image has been successfully deleted', 200);
-       } catch (BadRequestException $e) {
-        return $this->error(null, 'Bad Request', 400);
-       } catch (\Throwable $th) {
-        Log::error($th->getMessage());
-        return $this->serverError();
-       }
+
+        try {
+            $action($request);
+            return $this->success(null, 'Image has been successfully deleted', 200);
+        } catch (BadRequestException $e) {
+            return $this->error(null, 'Bad Request', 400);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return $this->serverError();
+        }
     }
 
     /**
@@ -112,16 +112,47 @@ class GalleryController extends Controller
      */
     public function destroy(Gallery $gallery)
     {
-        if(!$gallery){
-            return $this->error(null, 'Not found',404);
+        if (!$gallery) {
+            return $this->error(null, 'Not found', 404);
         }
         try {
             Gallery::destroy($gallery->id);
 
-            return $this->success(null,'Gallery has been successfully deleted', 200);
+            return $this->success(null, 'Gallery has been successfully deleted', 200);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return $this->serverError();
         }
+    }
+
+    /**
+     * Add tags to a gallery.
+     */
+    public function addTags(AddRemoveTagsRequest $request, AddTagsAction $action)
+    {
+
+        if (!$action($request)) {
+            return $this->serverError();
+        }
+        ;
+        return $this->success(null, 'Tags has been successfully added', 200);
+    }
+
+    /** 
+     * Remove tags from a gallery.
+     */
+    public function removeTags(AddRemoveTagsRequest $request, RemoveTagsAction $action)
+    {
+       
+        try {
+            $action($request);
+            return $this->success(null, 'Tags has been removed successfully', 200);
+        } catch (BadRequestException) {
+            return $this->error(null, 'Bad request', 400);
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return $this->serverError();
+        }
+
     }
 }
