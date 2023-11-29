@@ -8,7 +8,7 @@ use App\Models\{User, Image, Gallery};
 use Illuminate\Http\UploadedFile;
 
 use function PHPUnit\Framework\assertGreaterThan;
-
+//test suits needs to be refactored
 class ImageControllerTest extends TestCase
 {
     use RefreshDatabase;
@@ -141,5 +141,28 @@ class ImageControllerTest extends TestCase
             'tags' => 'a:3:{i:0;s:3:"Red";i:1;s:5:"Green";i:2;s:4:"Blue";}'
         ]);
         $response->assertStatus(401)->assertJsonFragment(['message' => 'Unauthorized']);
+    }
+    //TODO why the tags accessor is not working in test env??
+    public function test_authorized_user_can_remove_tags_from_an_image()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $image1 = Image::factory()->create([
+            'user_id'=> $user->id, 
+            'tags'=> [2]
+        ]);
+      
+        $image2 = Image::factory()->create(['user_id' => 3]);
+        $response = $this->delete('/api/v1/images/'.$image1->id . '/tags', [
+            'tags'=> serialize([2])
+        ]);
+        $image1->refresh();
+        
+        $response->assertStatus(200)->assertJsonFragment(['message'=> 'Tags has been removed successfully']);
+        $this->assertEmpty($image1->tags);
+        $response = $this->delete('/api/v1/images/'.$image2->id . '/tags', [
+            'tags'=> serialize([2])
+        ]);
+        $response->assertStatus(401)->assertJsonFragment(['message'=> 'Unauthorized']);
     }
 }
