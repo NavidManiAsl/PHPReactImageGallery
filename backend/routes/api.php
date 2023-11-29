@@ -3,7 +3,6 @@
 use App\Http\Controllers\{AuthController, ImageController, GalleryController};
 use App\Http\Middleware\Auth;
 use App\Http\Middleware\CheckOwnership;
-use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 
 
@@ -17,9 +16,9 @@ Route::middleware(Auth::class)->prefix('/images')->group(function () {
     Route::post('/', [ImageController::class, 'store']);
     Route::get('/', [ImageController::class, 'index']);
 
-    Route::post('/{image}/tags', [ImageController::class,'addTags'])
-    ->middleware(CheckOwnership::class);
-    Route::delete('/{image}/tags', [ImageController::class,'removeTags'])
+    Route::post('/{image}/tags', [ImageController::class, 'addTags'])
+        ->middleware(CheckOwnership::class);
+    Route::delete('/{image}/tags', [ImageController::class, 'removeTags'])
         ->middleware(CheckOwnership::class);
 
     Route::get('/{image}', [ImageController::class, 'show'])
@@ -46,14 +45,11 @@ Route::middleware(Auth::class)->prefix('/galleries')->group(function () {
     Route::delete('/{gallery}/images', [GalleryController::class, 'removeImage'])
         ->middleware(CheckOwnership::class);
 
+    Route::post('/{gallery}/tags', [GalleryController::class, 'addTags'])
+        ->middleware(CheckOwnership::class);
+
+        Route::delete('/{gallery}/tags', [GalleryController::class, 'removeTags'])
+        ->middleware(CheckOwnership::class);
+
 });
 
-/**
- * create a gallery DONE
- * show user galleries DONE
- * show a gallery DONE
- * delete a gallery DONE
- * add image to a gallery DONE
- * remove an image from gallery DONE
- * override router exceptions DONE
- */
