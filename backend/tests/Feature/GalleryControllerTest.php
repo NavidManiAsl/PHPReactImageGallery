@@ -116,4 +116,38 @@ class GalleryControllerTest extends TestCase
         ]);
         $response->assertStatus(401)->assertJsonFragment(['message' => 'Unauthorized']);
     }
+
+    public function test_authorized_user_can_add_tags_to_a_gallery()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $gallery1= Gallery::factory()->create(['user_id'=> $user->id,'tags'=> []]);
+        $gallery2= Gallery::factory()->create();
+        $response= $this->post('/api/v1/galleries/'. $gallery1->id . '/tags',[
+            'tags'=> serialize([1])
+        ]);
+        $response->assertStatus(200)->assertJsonFragment(['message'=> 'Tags has been successfully added']);
+        $gallery1->refresh();
+        $this->assertEquals(count($gallery1->tags),1);
+        
+        $response= $this->post('/api/v1/galleries/'. $gallery2->id . '/tags',[
+            'tags'=> serialize([1])
+        ]);
+        $response->assertStatus(401)->assertJsonFragment(['message'=> 'Unauthorized']);
+    }
+
+    public function test_authorized_user_can_remove_tags_from_a_gallery()
+    {
+        $user = User::factory()->create();  
+        $this->actingAs($user);
+        $gallery1= Gallery::factory()->create(['user_id'=> $user->id,'tags'=> [2]]);
+        $gallery2= Gallery::factory()->create();
+        $response= $this->delete('/api/v1/galleries/'.$gallery1->id . '/tags',['tags' => serialize([2])]);
+        $response->assertStatus(200)->assertJsonFragment(['message'=> 'Tags has been removed successfully']);
+        $gallery1->refresh();
+        $this->assertEmpty($gallery1->tags);
+
+        $response= $this->delete('/api/v1/galleries/'.$gallery2->id . '/tags',['tags' => serialize([2])]);
+        $response->assertStatus(401)->assertJsonFragment(['message'=> 'Unauthorized']);
+    }
 }

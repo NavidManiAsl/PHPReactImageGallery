@@ -13,7 +13,6 @@ class RemoveTagsAction
     public function __invoke(AddRemoveTagsRequest $request)
     {
         if ($request->image) {
-            dd('navid');
             $image = Image::find($request->image);
             $currentTags = $image->tags;
             $tagsToRemove = unserialize($request->get('tags'));
