@@ -91,7 +91,7 @@ class ImageController extends Controller
             return $this->serverError();
         }
         ;
-        return $this->success(null, 'Tags has been successfully updated', 200);
+        return $this->success(null, 'Tags has been successfully added', 200);
     }
 
     /** 

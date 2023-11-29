@@ -134,7 +134,7 @@ class ImageControllerTest extends TestCase
         $response = $this->post('/api/v1/images/' . $image1->id . '/tags', [
             'tags' => 'a:3:{i:0;s:3:"Red";i:1;s:5:"Green";i:2;s:4:"Blue";}'
         ]);
-        $response->assertStatus(200)->assertJsonFragment(['message' => 'Tags has been successfully updated']);
+        $response->assertStatus(200)->assertJsonFragment(['message' => 'Tags has been successfully added']);
         $image1->refresh();
         assertGreaterThan(1, count($image1->tags));
         $response = $this->post('/api/v1/images/' . $image2->id . '/tags', [
