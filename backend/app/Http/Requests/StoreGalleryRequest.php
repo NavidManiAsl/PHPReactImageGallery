@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Rules\Serialized;
 
 class StoreGalleryRequest extends FormRequest
 {
@@ -24,7 +23,7 @@ class StoreGalleryRequest extends FormRequest
     {
         return [
             'name'=>['string', 'min:3', 'max:256','required', 'unique:galleries'],
-            'tags' => ['string','max:2000', new Serialized]
+            'tags' => ['JSON']
         ];
     }
 }

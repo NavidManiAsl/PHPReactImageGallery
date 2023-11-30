@@ -11,18 +11,17 @@ class AddImageAction
     {
         $galleryId = $request->gallery;
         $gallery = Gallery::where('id', $galleryId)->first();
-        $children = unserialize($gallery->images);
-    
-        $currentImages = $children ? $children : [];
-        $newImages = unserialize(request()->images);
-        
-        if(array_intersect($currentImages, $newImages)) {
+
+        $currentImages = $gallery->images ? $gallery->images : [];
+        $newImages = json_decode(request()->images);
+
+        if (array_intersect($currentImages, $newImages)) {
             throw new DuplicateImagesException;
         }
         $galleryImages = array_unique(array_merge($currentImages, $newImages));
-        $gallery->images = serialize($galleryImages);
+        $gallery->images = $galleryImages;
 
-       $gallery->save();
+        $gallery->save();
 
     }
 }

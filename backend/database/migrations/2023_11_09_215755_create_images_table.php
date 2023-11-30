@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('description');
             $table->integer('size');
             $table->string('dimension');
-            $table->string('tags');
+            $table->json('tags');
             $table->foreignId('user_id')
                 ->constrained()
                 ->cascadeOnDelete()

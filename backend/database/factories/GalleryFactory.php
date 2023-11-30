@@ -19,11 +19,11 @@ class GalleryFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'tags' => serialize($this->faker->shuffleArray()),
+            'tags' => json_encode($this->faker->shuffleArray([1,2,3])),
             'user_id' => function () {
                 return User::factory()->create()->id;
             },
-            'images' => serialize($this->faker->shuffleArray([1,2,3])),
+            'images' => json_encode($this->faker->shuffleArray([1,2,3])),
         ];
     }
 }

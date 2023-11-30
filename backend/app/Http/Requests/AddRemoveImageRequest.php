@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Rules\Serialized;
 
 class AddRemoveImageRequest extends FormRequest
 {
@@ -23,7 +22,7 @@ class AddRemoveImageRequest extends FormRequest
     public function rules(): array
     {
         return [
-           'images'=>[new Serialized]
+           'images'=>['JSON']
         ];
     }
 }

@@ -16,8 +16,8 @@ class Image extends Model
     protected function tags():Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $value ? unserialize($value):[],
-            set: fn ($value) => serialize($value));
+            get: fn ($value) => $value ? json_decode($value):[],
+            set: fn ($value) => is_string($value) ? $value : json_encode($value)); 
     }
 
     public function user()

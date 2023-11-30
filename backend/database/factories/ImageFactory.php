@@ -25,7 +25,7 @@ class ImageFactory extends Factory
             'description' => $this->faker->text(),
             'size' => $this->faker->numberBetween(10,1000),
             'dimension' => $this->faker->word(),
-            'tags' => serialize($this->faker->shuffleArray()),
+            'tags' => json_encode($this->faker->shuffleArray([1,2,3])),
             'user_id' => function(){
                 return User::factory()->create()->id;
             },

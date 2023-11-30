@@ -15,7 +15,7 @@ class RemoveTagsAction
         if ($request->image) {
             $image = Image::find($request->image);
             $currentTags = $image->tags;
-            $tagsToRemove = unserialize($request->get('tags'));
+            $tagsToRemove = json_decode($request->get('tags'));
 
             if (count(array_intersect($tagsToRemove, $currentTags)) !== count($tagsToRemove)) {
                 throw new BadRequestException;
@@ -26,7 +26,7 @@ class RemoveTagsAction
         } else {
             $gallery = Gallery::find($request->gallery);
             $currentTags = $gallery->tags;
-            $tagsToRemove = unserialize($request->get('tags'));
+            $tagsToRemove = json_decode($request->get('tags'));
 
             if (count(array_intersect($tagsToRemove, $currentTags)) !== count($tagsToRemove)) {
                 throw new BadRequestException;

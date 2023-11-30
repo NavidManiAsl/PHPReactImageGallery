@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('galleries', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('images')->nullable();
-            $table->string('tags')->nullable();
+            $table->json('images')->nullable();
+            $table->json('tags')->nullable();
             $table->foreignId('user_id')
                 ->constrained()
                 ->cascadeOnDelete()

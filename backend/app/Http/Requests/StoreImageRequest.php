@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\Serialized;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreImageRequest extends FormRequest
@@ -26,7 +25,7 @@ class StoreImageRequest extends FormRequest
             'image' => ['required', 'image','mimes:jpeg,png,jpg' ],
             'name' => ['required', 'string', 'max:50', 'unique:images'],
             'description' => ['string','max:2000'],
-            'tags' => ['string','max:2000', new Serialized]
+            'tags' => ['JSON']
 
         ];
     }

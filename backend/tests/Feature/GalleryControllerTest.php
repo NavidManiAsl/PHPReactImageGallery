@@ -78,7 +78,7 @@ class GalleryControllerTest extends TestCase
         $gallery1 = Gallery::factory()->create(['user_id' => $user->id, 'images' => null]);
         $gallery2 = Gallery::factory()->create();
         $response = $this->post('/api/v1/galleries/' . $gallery1->id, [
-            'images' => serialize([$image->id])
+            'images' => json_encode([$image->id])
         ]);
         $response->assertStatus(200)->assertJson([
             'status' => 'ok',
@@ -86,10 +86,10 @@ class GalleryControllerTest extends TestCase
             'data' => null
         ]);
         $gallery1->refresh();
-        $this->assertEquals(count(unserialize($gallery1->images)), 1);
+        $this->assertEquals(count($gallery1->images), 1);
 
         $response = $this->post('/api/v1/galleries/' . $gallery2->id, [
-            'images' => serialize([$image->id])
+            
         ]);
 
         $response->assertStatus(401)->assertJsonFragment(['message' => 'Unauthorized']);
@@ -101,18 +101,18 @@ class GalleryControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $image = Image::factory()->create(['id' => $user->id]);
-        $gallery1 = Gallery::factory()->create(['user_id' => $user->id, 'images' => serialize([$image->id])]);
+        $gallery1 = Gallery::factory()->create(['user_id' => $user->id, 'images' => json_encode([$image->id])]);
         $gallery2 = Gallery::factory()->create();
         $this->actingAs($user);
         $response = $this->delete('/api/v1/galleries/' . $gallery1->id . '/images', [
-            'images' => serialize([$image->id])
+            'images' => json_encode([$image->id])
         ]);
         $response->assertStatus(200)->assertJsonFragment(['message' => 'Image has been successfully deleted']);
         $gallery1->refresh();
-        $this->assertEquals(count(unserialize($gallery1->images)), false);
+        $this->assertEquals(count($gallery1->images), false);
 
         $response = $this->delete('/api/v1/galleries/' . $gallery2->id . '/images', [
-            'images' => serialize([$image->id])
+            'images' => json_encode([$image->id])
         ]);
         $response->assertStatus(401)->assertJsonFragment(['message' => 'Unauthorized']);
     }
@@ -124,7 +124,7 @@ class GalleryControllerTest extends TestCase
         $gallery1= Gallery::factory()->create(['user_id'=> $user->id,'tags'=> []]);
         $gallery2= Gallery::factory()->create();
         $response= $this->post('/api/v1/galleries/'. $gallery1->id . '/tags',[
-            'tags'=> serialize([1])
+            'tags'=> json_encode([1])
         ]);
         $response->assertStatus(200)->assertJsonFragment(['message'=> 'Tags has been successfully added']);
         $gallery1->refresh();
@@ -142,12 +142,12 @@ class GalleryControllerTest extends TestCase
         $this->actingAs($user);
         $gallery1= Gallery::factory()->create(['user_id'=> $user->id,'tags'=> [2]]);
         $gallery2= Gallery::factory()->create();
-        $response= $this->delete('/api/v1/galleries/'.$gallery1->id . '/tags',['tags' => serialize([2])]);
+        $response= $this->delete('/api/v1/galleries/'.$gallery1->id . '/tags',['tags' => json_encode([2])]);
         $response->assertStatus(200)->assertJsonFragment(['message'=> 'Tags has been removed successfully']);
         $gallery1->refresh();
         $this->assertEmpty($gallery1->tags);
 
-        $response= $this->delete('/api/v1/galleries/'.$gallery2->id . '/tags',['tags' => serialize([2])]);
+        $response= $this->delete('/api/v1/galleries/'.$gallery2->id . '/tags');
         $response->assertStatus(401)->assertJsonFragment(['message'=> 'Unauthorized']);
     }
 }

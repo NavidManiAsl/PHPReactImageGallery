@@ -16,13 +16,13 @@ class AddTagsAction
     public function __invoke(AddRemoveTagsRequest $request)
     {
         if ($request->image) {
-            
+
             $image = Image::find($request->image);
             $currentTags = $image->tags ? $image->tags : [];
-            $newTags = unserialize($request->input("tags"));
+            $newTags = json_decode($request->input("tags"));
             $image->tags = array_unique(array_merge($currentTags, $newTags));
-            
-            
+
+
             try {
                 $image->save();
                 return true;
@@ -31,11 +31,11 @@ class AddTagsAction
                 return false;
             }
         } else {
-            
+
             //dd($request->image);
             $gallery = Gallery::find($request->gallery);
             $currentTags = $gallery->tags ? $gallery->tags : [];
-            $newTags = unserialize($request->input("tags"));
+            $newTags = json_decode($request->input("tags"));
             $gallery->tags = array_unique(array_merge($currentTags, $newTags));
 
 

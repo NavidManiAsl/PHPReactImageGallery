@@ -116,7 +116,7 @@ class ImageControllerTest extends TestCase
         $response = $this->withHeaders(['bearer' => $user->currentAccessToken()])->post('/api/v1/images', [
             'name' => 'test',
             'description' => 'test',
-            'tags' => 'a:3:{i:0;s:3:"Red";i:1;s:5:"Green";i:2;s:4:"Blue";}',
+            'tags' => json_encode([1]),
             'image' => new UploadedFile($testImagePath, 'test.jpg', 'image/jpeg', null, true),
         ]);
 
@@ -132,29 +132,27 @@ class ImageControllerTest extends TestCase
         $image1 = Image::factory()->create(['user_id' => $user->id, 'tags' => null]);
         $image2 = Image::factory()->create(['user_id' => 3]);
         $response = $this->post('/api/v1/images/' . $image1->id . '/tags', [
-            'tags' => 'a:3:{i:0;s:3:"Red";i:1;s:5:"Green";i:2;s:4:"Blue";}'
+            'tags' => json_encode([1,2,3])
         ]);
         $response->assertStatus(200)->assertJsonFragment(['message' => 'Tags has been successfully added']);
         $image1->refresh();
         assertGreaterThan(1, count($image1->tags));
-        $response = $this->post('/api/v1/images/' . $image2->id . '/tags', [
-            'tags' => 'a:3:{i:0;s:3:"Red";i:1;s:5:"Green";i:2;s:4:"Blue";}'
-        ]);
+        $response = $this->post('/api/v1/images/' . $image2->id . '/tags');
         $response->assertStatus(401)->assertJsonFragment(['message' => 'Unauthorized']);
     }
-    //TODO why the tags accessor is not working in test env??
+    
     public function test_authorized_user_can_remove_tags_from_an_image()
     {
         $user = User::factory()->create();
         $this->actingAs($user);
         $image1 = Image::factory()->create([
             'user_id'=> $user->id, 
-            'tags'=> [2]
+            'tags'=> json_encode([2])
         ]);
       
         $image2 = Image::factory()->create(['user_id' => 3]);
         $response = $this->delete('/api/v1/images/'.$image1->id . '/tags', [
-            'tags'=> serialize([2])
+            'tags'=> json_encode([2])
         ]);
         $image1->refresh();
         
