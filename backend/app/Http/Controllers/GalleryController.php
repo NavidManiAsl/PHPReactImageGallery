@@ -155,10 +155,10 @@ class GalleryController extends Controller
 
     }
 
-    public function search(string $query)
+    public function search(string $query, int $user)
     {
         try {
-            $searchResult = Gallery::whereJsonContains('tags', $query)->get();
+            $searchResult = Gallery::whereJsonContains('tags', $query)->where('user_id', $user)->get();
         } catch (\Throwable $th) {
             throw new \Exception;
         }

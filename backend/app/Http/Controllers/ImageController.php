@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Actions\StoreImageAction;
 use App\Exceptions\BadRequestException;
 use App\Http\Requests\AddRemoveTagsRequest;
+use App\Http\Requests\SearchRequest;
 use App\Http\Requests\StoreImageRequest;
 use App\Models\Image;
 use Illuminate\Support\Facades\Log;
@@ -114,10 +115,10 @@ class ImageController extends Controller
 
     }
 
-    public function search(String $query)
+    public function search(string $query, $user)
     {
         try {
-            $result = Image::whereJsonContains('tags', $query)->get();
+            $result = Image::whereJsonContains('tags', $query)->where('user_id', $user)->get();
 
         } catch (\Throwable) {
             throw new \Exception;
