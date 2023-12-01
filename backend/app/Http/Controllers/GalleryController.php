@@ -22,7 +22,6 @@ class GalleryController extends Controller
     public function store(StoreGalleryRequest $request)
     {
 
-
         $gallery = Gallery::create([
             "name" => $request->name,
             "tags" => $request->tags,
@@ -143,7 +142,7 @@ class GalleryController extends Controller
      */
     public function removeTags(AddRemoveTagsRequest $request, RemoveTagsAction $action)
     {
-       
+
         try {
             $action($request);
             return $this->success(null, 'Tags has been removed successfully', 200);
@@ -154,5 +153,15 @@ class GalleryController extends Controller
             return $this->serverError();
         }
 
+    }
+
+    public function search(string $query)
+    {
+        try {
+            $searchResult = Gallery::whereJsonContains('tags', $query)->get();
+        } catch (\Throwable $th) {
+            throw new \Exception;
+        }
+        return $searchResult;
     }
 }

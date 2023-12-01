@@ -11,6 +11,8 @@ use App\Http\Requests\AddRemoveTagsRequest;
 use App\Http\Requests\StoreImageRequest;
 use App\Models\Image;
 use Illuminate\Support\Facades\Log;
+use PhpParser\Node\Expr\Cast\String_;
+use Throwable;
 
 class ImageController extends Controller
 {
@@ -102,13 +104,24 @@ class ImageController extends Controller
 
         try {
             $action($request);
-            return $this->success(null, 'Tags has been removed successfully',200);
+            return $this->success(null, 'Tags has been removed successfully', 200);
         } catch (BadRequestException) {
-            return $this->error(null,'Bad request',400);
+            return $this->error(null, 'Bad request', 400);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return $this->serverError();
         }
 
+    }
+
+    public function search(String $query)
+    {
+        try {
+            $result = Image::whereJsonContains('tags', $query)->get();
+
+        } catch (\Throwable) {
+            throw new \Exception;
+        }
+        return $result;
     }
 }
