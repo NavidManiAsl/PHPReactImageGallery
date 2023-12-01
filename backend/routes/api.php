@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\{AuthController, ImageController, GalleryController};
+use App\Http\Controllers\{AuthController, ImageController, GalleryController, SearchController};
 use App\Http\Middleware\Auth;
 use App\Http\Middleware\CheckOwnership;
 use Illuminate\Support\Facades\Route;
@@ -52,4 +52,6 @@ Route::middleware(Auth::class)->prefix('/galleries')->group(function () {
         ->middleware(CheckOwnership::class);
 
 });
+
+Route::middleware(Auth::class)->get('search', [SearchController::class,'search']);
 
