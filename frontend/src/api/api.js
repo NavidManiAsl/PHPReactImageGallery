@@ -5,7 +5,6 @@ export const apiGet = async (uri, data = null) => {
     data && Object.entries(data).forEach(([key, value]) => {
         params.params[key] = value;
     });
-
     try {
         return await axios.get(uri, params)
     } catch (error) {
@@ -15,13 +14,10 @@ export const apiGet = async (uri, data = null) => {
 }
 
 export const apiPost = async (uri, data) => {
-    const params = { params: {} }
-    Object.entries(data).forEach(([key, value]) => {
-        params.params[key] = value;
-    });
-
+   
+    
     try { 
-        return await axios.post(uri, params);
+        return await axios.post(uri, data);
     } catch (error) {
         console.log(error);
     }
