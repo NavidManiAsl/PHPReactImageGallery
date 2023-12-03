@@ -71,6 +71,14 @@ const Loginbutton = styled.button`
     background-color: #b68c18;
   }
 `;
+const style = {
+  
+    anchorTag :{
+      color:'inherit',
+      textDecoration:'none'
+    }
+  
+}
 
 const Registerbutton = styled.button`
   width: 30%;
@@ -85,6 +93,8 @@ const Registerbutton = styled.button`
 
   &:hover {
     transform: scale(1.02);
+    color: #b68c18;
+  border: #b68c18 1px solid;
   }
 `;
 
@@ -118,7 +128,7 @@ const Login = () => {
         <Footer>
           <Text>Don't have an account?</Text>
           <Registerbutton type="submit">
-            <a href="register">Create New</a>
+            <a href="register" style={style.anchorTag}>Create New</a>
           </Registerbutton>
         </Footer>
       </Form>
