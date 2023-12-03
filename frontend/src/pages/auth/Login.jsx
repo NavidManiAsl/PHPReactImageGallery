@@ -1,5 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { login } from "../../auth/authService";
+import { useAuth } from "../../auth/authContext";
 
 const Container = styled.div`
   display: flex;
@@ -30,18 +32,17 @@ const Header = styled.h1`
 `;
 
 const Footer = styled.p`
-  display:flex;
+  display: flex;
   width: 100%;
   margin-top: 4rem;
-  align-items:center;
-  justify-content:center;
-  
+  align-items: center;
+  justify-content: center;
 `;
 
 const Text = styled.p`
-    color:#fff;
-    font-size:1rem;
-    margin-right:1.5rem;
+  color: #fff;
+  font-size: 1rem;
+  margin-right: 1.5rem;
 `;
 
 const Input = styled.input`
@@ -78,7 +79,7 @@ const Registerbutton = styled.button`
   color: #a77028;
   border: #a77028 1px solid;
   border-radius: 4px;
- 
+
   cursor: pointer;
   transition: background-color 0.4s ease;
 
@@ -88,13 +89,13 @@ const Registerbutton = styled.button`
 `;
 
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const { handleLogin, isAuthenticated, user } = useAuth();
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Username:", username);
-    console.log("Password:", password);
+    await handleLogin(email, password);
   };
 
   return (
@@ -102,10 +103,10 @@ const Login = () => {
       <Form onSubmit={handleSubmit}>
         <Header>Login to your account</Header>
         <Input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          type="email"
+          placeholder="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <Input
           type="password"
@@ -115,8 +116,10 @@ const Login = () => {
         />
         <Loginbutton type="submit">Log in</Loginbutton>
         <Footer>
-            <Text>Don't have an account?</Text>
-            <Registerbutton type="submit">Create New</Registerbutton>
+          <Text>Don't have an account?</Text>
+          <Registerbutton type="submit">
+            <a href="register">Create New</a>
+          </Registerbutton>
         </Footer>
       </Form>
     </Container>
