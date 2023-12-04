@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { login } from "../../auth/authService";
+import { validateEmail, validatePassword } from "../../utils/validationUtils";
 import { useAuth } from "../../auth/authContext";
 
 const Container = styled.div`
@@ -72,13 +72,15 @@ const Loginbutton = styled.button`
   }
 `;
 const style = {
-  
-    anchorTag :{
-      color:'inherit',
-      textDecoration:'none'
-    }
-  
-}
+  anchorTag: {
+    color: "inherit",
+    textDecoration: "none",
+  },
+  alert: {
+    color: "red",
+    margin: "3px",
+  },
+};
 
 const Registerbutton = styled.button`
   width: 30%;
@@ -94,41 +96,97 @@ const Registerbutton = styled.button`
   &:hover {
     transform: scale(1.02);
     color: #b68c18;
-  border: #b68c18 1px solid;
+    border: #b68c18 1px solid;
   }
 `;
 
 const Login = () => {
   const { handleLogin, isAuthenticated, user } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [formError, setFormError] = useState({
+    email: "",
+    password: "",
+    authentication: "",
+  });
+
+  const handleEmail = (e) => {
+    setFormData({ ...formData, email: e.target.value });
+  };
+
+  const handlePassword = (e) => {
+    setFormData({ ...formData, password: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await handleLogin(email, password);
-  };
+    setFormError({
+      email: "",
+      password: "",
+      authentication: "",
+    });
+    const validatedEmail = validateEmail(formData.email);
+    if (!validatedEmail.status) {
+      setFormError((prevState) => ({
+        ...prevState,
+        email: validatedEmail.message,
+      }));
+    }
 
+    const validatedPassword = validatePassword(formData.password);
+    if (!validatedPassword.status) {
+      setFormError((prevState) => ({
+        ...prevState,
+        password: validatedPassword.message,
+      }));
+    }
+
+    !formError.email &&
+      !formError.password &&
+      (await handleLogin(formData.email, formData.password));
+    isAuthenticated &&
+      setFormError((prevState) => ({
+        ...prevState,
+        authentication: "Authentication failed",
+      }));
+  };
+  //TODO must hash the password (must be synced with laravel).
   return (
     <Container>
       <Form onSubmit={handleSubmit}>
         <Header>Login to your account</Header>
+        <p style={style.alert}>
+          {formError.email ? "\u2022" + formError.email : ""}
+        </p>
         <Input
-          type="email"
+          type="text"
           placeholder="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={formData.email}
+          onChange={handleEmail}
         />
+        <p style={style.alert}>
+          {formError.password ? "\u2022" + formError.password : ""}
+        </p>
         <Input
           type="password"
           placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={formData.password}
+          onChange={handlePassword}
         />
+        <p style={style.alert}>
+          {formError.authentication ? "\u2022" + formError.authentication : ""}
+        </p>
         <Loginbutton type="submit">Log in</Loginbutton>
         <Footer>
           <Text>Don't have an account?</Text>
           <Registerbutton type="submit">
-            <a href="register" style={style.anchorTag}>Create New</a>
+            <a href="register" style={style.anchorTag}>
+              Create New
+            </a>
           </Registerbutton>
         </Footer>
       </Form>
@@ -137,3 +195,4 @@ const Login = () => {
 };
 
 export default Login;
+
