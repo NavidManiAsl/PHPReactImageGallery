@@ -32,6 +32,7 @@ const Header = styled.h1`
 `;
 
 const Footer = styled.p`
+  font-family: sans-serif;
   display: flex;
   width: 100%;
   margin-top: 4rem;
