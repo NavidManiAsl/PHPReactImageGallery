@@ -35,15 +35,13 @@ const Footer = styled.p`
   display: flex;
   width: 100%;
   margin-top: 4rem;
+  color: #fff;
   align-items: center;
   justify-content: center;
+  font-weight:light;
 `;
 
-const Text = styled.p`
-  color: #fff;
-  font-size: 1rem;
-  margin-right: 1.5rem;
-`;
+
 
 const Input = styled.input`
   width: calc(100% - 24px);
@@ -89,6 +87,7 @@ const Registerbutton = styled.button`
   color: #a77028;
   border: #a77028 1px solid;
   border-radius: 4px;
+  margin-left: 1.5rem;
 
   cursor: pointer;
   transition: background-color 0.4s ease;
@@ -182,7 +181,7 @@ const Login = () => {
         </p>
         <Loginbutton type="submit">Log in</Loginbutton>
         <Footer>
-          <Text>Don't have an account?</Text>
+          Don't have an account?
           <Registerbutton type="submit">
             <a href="register" style={style.anchorTag}>
               Create New
@@ -195,4 +194,3 @@ const Login = () => {
 };
 
 export default Login;
-
