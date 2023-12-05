@@ -7,11 +7,13 @@ export const AuthProvider = ({ children }) => {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState({})
+    const [Authenticating, setAuthenticating] = useState(false)
 
     const handleLogin = async (email, password) => {
         try {
+            setAuthenticating(true)
             const response = await login(email, password);
-            
+            setAuthenticating(false)
             if (response.status === 200) {
                 setIsAuthenticated(true);
                 setUser(response.data.data.user);
@@ -23,7 +25,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{user,isAuthenticated, handleLogin}}>
+        <AuthContext.Provider value={{user,isAuthenticated,Authenticating, handleLogin}}>
             {children}
         </AuthContext.Provider>
     )
