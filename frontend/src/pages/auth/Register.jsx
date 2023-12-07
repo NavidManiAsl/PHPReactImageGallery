@@ -120,36 +120,50 @@ const Register = () => {
   });
 
   const validateFormData = (username, email, password, passwordConfirm) => {
-    const { status: validUsername, message: usernameError } =
-      validateUsername(username);
-    if (!validUsername) {
-      setFormError({ ...formError, username: usernameError });
-    }
-
+    const { status: validUsername, message: usernameError } = validateUsername(username);
+  
+    setFormError((prevFormError) => ({
+      ...prevFormError,
+      username: validUsername ? "" : usernameError,
+    }));
+  
     const { status: validEmail, message: emailError } = validateEmail(email);
-    if (!validEmail) {
-      setFormError({
-        ...formError,
-        email: emailError,
-      });
-    }
-
-    const {
-      belongsTo: belongsTo,
-      status: validPassword,
-      message: passwordError,
-    } = validatePassword(password, passwordConfirm);
     
+    setFormError((prevFormError) => ({
+      ...prevFormError,
+      email: validEmail ? "" : emailError,
+    }));
+  
+    const { belongsTo: belongsTo, status: validPassword, message: passwordError } = validatePassword(password, passwordConfirm);
+  
     if (!validPassword) {
-     setFormData({...formError, [belongsTo]:passwordError})
+      setFormError((prevFormError) => ({
+        ...prevFormError,
+        [belongsTo]: passwordError,
+      }));
     }
   };
+  
 
+  const test = (e) =>{
+    e.preventDefault();
+    setFormError({
+      username:'',
+      password:'',
+      passwordConfirm:'',
+      email:'',
+    })
+    const {username, email, password, passwordConfirm} = formData
+    validateFormData(username, email, password, passwordConfirm);
+   
+  }
   const handleInput = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handelSubmit = () => {};
+  const handelSubmit = (e) => {
+    e.preventDefault();
+  };
 
   //TODO must hash the password (must be synced with laravel).
   return (
@@ -157,7 +171,7 @@ const Register = () => {
       <Form onSubmit={handelSubmit}>
         <Header>Register Now!</Header>
         <p style={style.alert}>
-          {formError.email ? "\u2022" + formError.email : ""}
+          {formError.username ? "\u2022" + formError.username: ""}
         </p>
         <Input
           type="text"
@@ -166,6 +180,9 @@ const Register = () => {
           onChange={handleInput}
           name="username"
         />
+         <p style={style.alert}>
+          {formError.email ? "\u2022" + formError.email : ""}
+        </p>
         <Input
           type="text"
           placeholder="Enter your email"
@@ -184,6 +201,9 @@ const Register = () => {
           autoComplete="off"
           name="password"
         />
+         <p style={style.alert}>
+          {formError.passwordConfirm ? "\u2022" + formError.passwordConfirm : ""}
+        </p>
         <Input
           type="password"
           placeholder="Retype password"
@@ -192,10 +212,7 @@ const Register = () => {
           autoComplete="off"
           name="passwordConfirm"
         />
-        <p style={style.alert}>
-          {formError.authentication ? "\u2022" + formError.authentication : ""}
-        </p>
-        <Registerbutton type="submit">Register</Registerbutton>
+        <Registerbutton type="submit" onClick={test}>Register</Registerbutton>
         <Footer>
           Already have an account?
           <Loginbutton type="submit">
