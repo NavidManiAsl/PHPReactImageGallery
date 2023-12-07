@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useRouteError } from "react-router-dom";
+import { useRouteError, Link } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -39,15 +39,12 @@ const Message = styled.p`
   margin-bottom: 1.5rem;
 `;
 
-const ReturnLink = styled.a`
-  color: #a77028; 
-  text-decoration: underline;
-  cursor: pointer;
 
-  &:hover {
-    text-decoration: none;
+const style = {
+  returnLink:{
+    color:'#a77028'
   }
-`;
+}
 
 const Error = () => {
   const error = useRouteError();
@@ -58,7 +55,7 @@ const Error = () => {
         <Header>Oops!</Header>
         <Text>An unexpected error has occurred.</Text>
         <Message>{error.statusText || error.message}</Message>
-        <ReturnLink href="/">Return to Main Page</ReturnLink>
+       <Link to={'/'} style={style.returnLink}>Return to Main Page</Link>
       </StyledError>
     </Container>
   );
