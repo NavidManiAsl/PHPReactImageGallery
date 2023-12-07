@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState({})
-    const [Authenticating, setAuthenticating] = useState(false)
+    const [authenticating, setAuthenticating] = useState(false)
 
     const handleLogin = async (email, password) => {
         try {
@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{user,isAuthenticated,Authenticating, handleLogin}}>
+        <AuthContext.Provider value={{user,isAuthenticated,authenticating, handleLogin}}>
             {children}
         </AuthContext.Provider>
     )

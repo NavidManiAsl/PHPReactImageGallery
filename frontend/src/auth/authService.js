@@ -7,3 +7,7 @@ export const login = async (email, password) =>
     return await apiPost(API_URLS.login,payload);
      
 } 
+
+export const register = async (email ,password,)=>{
+
+}
