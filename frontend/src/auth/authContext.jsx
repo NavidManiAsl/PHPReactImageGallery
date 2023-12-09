@@ -15,13 +15,13 @@ export const AuthProvider = ({ children }) => {
             setAuthenticating(true)
             const response = await login(email, password);
             setAuthenticating(false)
-            if (response.status === 200) {
+            if (response?.status === 200) {
                 setIsAuthenticated(true);
                 setUser(response.data.data.user);
             };
 
         } catch (error) {
-            console.log(error);
+            console.log(error)
         }
     }
 
