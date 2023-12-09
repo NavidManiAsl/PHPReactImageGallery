@@ -167,6 +167,7 @@ const Login = () => {
           placeholder="email"
           value={formData.email}
           onChange={handleEmail}
+          autoComplete="off"
         />
         <p style={style.alert}>
           {formError.password ? "\u2022" + formError.password : ""}
@@ -176,6 +177,7 @@ const Login = () => {
           placeholder="Password"
           value={formData.password}
           onChange={handlePassword}
+          autoComplete="off"
         />
         <p style={style.alert}>
           {formError.authentication ? "\u2022" + formError.authentication : ""}
