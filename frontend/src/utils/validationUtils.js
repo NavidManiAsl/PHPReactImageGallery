@@ -1,6 +1,6 @@
 export const validateUsername = (username) => {
     username = username?.trim();
-    return { status: username && username.length > 3, message: 'username must be at least 3 characters' }
+    return { status: username.length >0 && username.length > 3, message: 'username must be at least 3 characters' }
 };
 
 
