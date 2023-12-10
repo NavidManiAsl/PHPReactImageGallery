@@ -2,6 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { validateEmail, validatePassword } from "../../utils/validationUtils";
 import { useAuth } from "../../auth/authContext";
+import {useNavigate} from 'react-router-dom'
 
 const Container = styled.div`
   display: flex;
@@ -102,7 +103,7 @@ const Registerbutton = styled.button`
 
 const Login = () => {
   const { handleLogin, isAuthenticated, user } = useAuth();
-
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -147,12 +148,9 @@ const Login = () => {
 
     !formError.email &&
       !formError.password &&
-      (await handleLogin(formData.email, formData.password));
-    isAuthenticated &&
-      setFormError((prevState) => ({
-        ...prevState,
-        authentication: "Authentication failed",
-      }));
+      (await handleLogin(formData));
+    isAuthenticated && navigate('/main')
+      
   };
   //TODO must hash the password (must be synced with laravel).
   return (
