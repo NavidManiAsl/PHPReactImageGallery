@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from 'react';
 import { login } from './authService';
-import { useAxios } from '../api/api';
+
 
 const AuthContext = createContext();
 
@@ -10,14 +10,18 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState({})
     const [authenticating, setAuthenticating] = useState(true)
 
-    const handleLogin = async (email, password) => {
+    const handleLogin = async (formData) => {
+        if(isAuthenticated)return   
         try {
             setAuthenticating(true)
-            const response = await login(email, password);
+            const response = await login(formData);
+            console.log(response);
             setAuthenticating(false)
             if (response?.status === 200) {
                 setIsAuthenticated(true);
                 setUser(response.data.data.user);
+                document.cookie = `api_token=${response.data.data.token}`
+                
             };
 
         } catch (error) {
